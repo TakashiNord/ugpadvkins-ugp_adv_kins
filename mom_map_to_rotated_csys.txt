@@ -1,0 +1,47 @@
+
+int mom_map_to_rotated_csys
+(
+  void *client_data,    /* This is the mom object */
+  void *interp,         /* Pointer to the TCL interpreter */
+  int  argc,            /* Count of the numnber of arguments */
+  char **argv           /* Array of arguments where the
+                           argv[0] - The TCL extension */
+)
+{
+  int error;
+  MOM_input_point_p_t     input_gotos ;
+  MOM_input_point_p_t     rotd_gotos ;
+  MOM_input_point_p_t     processed_gotos ;
+
+  UF_MOM_id_t   mom_id = ( UF_MOM_id_t ) client_data ;
+
+  error = SET_input_point(mom_id, &input_gotos);
+  if ( error )
+  {
+    printf(" SET_input_point failed in mom_map_to_rotated_csys\n ");
+  }
+  else
+  {
+    error = mom_process_input_gotos(&input_gotos, &rotd_gotos);
+    if ( error )
+    {
+      printf(" mom_process_input_gotos failed in mom_map_to_rotated_csys\n ");
+    }
+    else
+    {
+      error = mom_transfer_gotos_rotd_mcsys(&rotd_gotos, &processed_gotos);
+      if ( error )
+      {
+        printf(" mom_transfer_gotos_rotd_mcsys failed in mom_map_to_rotated_csys\n ");
+      }
+      else
+      {
+        UF_MOM_set_double(mom_id , "pos_x", processed_gotos);
+        UF_MOM_set_double(mom_id , "pos_y", v7, v8);
+        UF_MOM_set_double(mom_id , "pos_z", v9, v10);
+        error = 0;
+      }
+    }
+  }
+  return error;
+}
